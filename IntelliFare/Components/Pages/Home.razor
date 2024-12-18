@@ -42,7 +42,7 @@
     <button class="calculate-btn" @onclick="CalculateChange">Calculate fare</button>
 </div>
 @code{
-    public string envVariables;
+    var envVariables;
     public Home()
     {
         DotNetEnv.Env.Load();

@@ -6,7 +6,6 @@ namespace IntelliFare
         public MainPage()
         {
             InitializeComponent();
-            DotNetEnv.Env.Load();
         }
     }
 }
