@@ -15,6 +15,7 @@
             <option value="@trans.Rate">@trans.Name</option>
         }
     </select>
+    <h1>@envVariables</h1>
     <h1>
         <span>You are here at</span>
         <span><strong>Santo Tomas</strong></span>
@@ -41,6 +42,12 @@
     <button class="calculate-btn" @onclick="CalculateChange">Calculate fare</button>
 </div>
 @code{
+    public string envVariables;
+    public Home()
+    {
+        DotNetEnv.Env.Load();
+        envVariables = Environment.GetEnvironmentVariable("API_KEY");
+    }
     public int selectedDestination = 0;
     public int selectedMode = 0;
     public decimal selectedDiscount = 0;
