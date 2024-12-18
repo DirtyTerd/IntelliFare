@@ -1,0 +1,121 @@
+﻿@page "/"
+<h1 class="modern-head">Welcome to IntelliFare</h1>
+<div class="inputs-container">
+    <p1>What type of passenger are you?</p1>
+    <select @bind="selectedDiscount" class="modern-select">
+        @foreach (var types in faretype)
+        {
+            <option value="@types.Discount">@types.Type</option>
+        }
+    </select>
+    <p1>Select a mode of transportation</p1>
+    <select @bind="selectedMode" class="modern-select">
+        @foreach (var trans in transpos)
+        {
+            <option value="@trans.Rate">@trans.Name</option>
+        }
+    </select>
+    <h1>
+        <span>You are here at</span>
+        <span><strong>Santo Tomas</strong></span>
+    </h1>
+    <p1>Select a destination</p1>
+    <select @bind="selectedDestination" class="modern-select">
+        @foreach (var desty in destinations)
+        {
+            <option value="@desty.Distance">@desty.Name</option>
+        }
+    </select>
+    <h1>
+        <span>Fare: </span>
+        <span><strong>Php</strong></span>
+        <span><strong>@FareCalculate(selectedMode, selectedDestination, actualDiscount(selectedDiscount))</strong></span>
+    </h1>
+    <input type="number" class="input-inp" placeholder="Payment:" @bind="farepayment"/>
+</div>
+<h1>
+    <span>Change: Php</span>
+    <span><strong>@farechange</strong></span>
+</h1>
+<div>
+    <button class="calculate-btn" @onclick="CalculateChange">Calculate fare</button>
+</div>
+@code{
+    public int selectedDestination = 0;
+    public int selectedMode = 0;
+    public decimal selectedDiscount = 0;
+    public decimal farepayment;
+    public decimal farechange = 0;
+    private List<Destination> destinations = new List<Destination>
+    {
+        new Destination { Distance = 1, Name = "Carmen" },
+        new Destination { Distance = 2, Name = "Villasis" },
+        new Destination { Distance = 3, Name = "Urdaneta" },
+        new Destination { Distance = 4, Name = "Binalonan" },
+        new Destination { Distance = 5, Name = "Pozorubio" }
+    };
+    private List<Transportation> transpos = new List<Transportation>
+    {
+        new Transportation { Rate = 25, Name = "Tricycle" },
+        new Transportation { Rate = 40, Name = "Taxi" },
+        new Transportation { Rate = 20, Name = "Van" },
+        new Transportation { Rate = 20, Name = "Bus" },
+        new Transportation { Rate = 15, Name = "Jeep" }
+    };
+    private List<PassengerType> faretype = new List<PassengerType>
+    {
+        new PassengerType { Discount = 0, Type = "Regular" },
+        new PassengerType { Discount = 20, Type = "Student" },
+        new PassengerType { Discount = 20, Type = "Senior" },
+        new PassengerType { Discount = 20, Type = "PWD" }
+    };
+
+    public async void CalculateChange()
+    {
+        decimal payment = FareCalculate(selectedMode, selectedDestination, actualDiscount(selectedDiscount));
+        decimal fp = farepayment;
+        if (fp < payment)
+        {
+            await Application.Current.MainPage.DisplayAlert("Insufficient Amount", "Pay the right fare amount", "Ok");
+            farechange = 0;
+        }
+        else if (fp > payment)
+        {
+            farechange = fp - payment;
+        }
+        else if (fp == payment)
+        {
+            farechange = 0;
+        }
+    }
+    public decimal FareCalculate(decimal i, decimal j, decimal n)
+    {
+        decimal formula = (i * j);
+        decimal subtractedDiscount = (i * j) * n;
+        decimal real = (i * j) - subtractedDiscount;
+        if (n == 0)
+        {
+            return formula;
+        }
+        return Math.Round(real, 2);
+    }
+    public decimal actualDiscount(decimal i)
+    {
+        return i / 100;
+    }
+    public class Destination
+    {
+        public decimal Distance { get; set; }
+        public string? Name { get; set; }
+    }
+    public class Transportation
+    {
+        public decimal Rate { get; set; }
+        public string? Name { get; set; }
+    }
+    public class PassengerType
+    {
+        public decimal Discount { get; set; }
+        public string? Type { get; set; }
+    }
+}
